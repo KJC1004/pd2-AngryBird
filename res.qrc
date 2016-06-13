@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/image">
+        <file>image/red.png</file>
+        <file>image/yellow.png</file>
+        <file>image/blue.png</file>
+        <file>image/black.png</file>
+        <file>image/catapult.png</file>
+        <file>image/ground.png</file>
+        <file>image/pig.png</file>
+        <file>image/big.png</file>
+        <file>image/playbutton.png</file>
+        <file>image/powerbutton.png</file>
+        <file>image/obstacle.png</file>
+    </qresource>
+</RCC>

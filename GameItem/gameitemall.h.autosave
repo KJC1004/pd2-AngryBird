@@ -1,0 +1,9 @@
+#ifndef ALL_H
+#define ALL_H
+
+#include <GameItem/gameitem.h>
+#include <GameItem/land.h>
+
+#include <GameItem/Bird/bird.h>
+
+#endif // ALL_H

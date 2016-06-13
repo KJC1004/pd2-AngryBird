@@ -80,7 +80,7 @@ public:
         label_Remain->setStyleSheet(QStringLiteral("font: 75 65pt \"Smudger LET\";"));
         label_Result = new QLabel(centralWidget);
         label_Result->setObjectName(QStringLiteral("label_Result"));
-        label_Result->setGeometry(QRect(600, 200, 400, 200));
+        label_Result->setGeometry(QRect(600, 150, 400, 200));
         QFont font;
         font.setFamily(QStringLiteral("Smudger LET"));
         font.setPointSize(72);

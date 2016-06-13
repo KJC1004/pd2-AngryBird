@@ -47,7 +47,6 @@ void GameItem::paint()
 
 void GameItem::die()
 {
-    emit dead();
     delete this;
 }
 
@@ -60,10 +59,8 @@ void GameItem::checkPos()
 
 void GameItem::checkVelocity()
 {
-    if(g_body->GetLinearVelocity().Length()<1.5)
-    {
-        if(--death<0) die();
-    }
-    else
-        death = 120;
+    if(g_body->GetLinearVelocity().Length()>1.5)
+        deathCountDown=120;
+    else if(--deathCountDown<0)
+        connect(g_timer,SIGNAL(timeout()),this,SLOT(die()));
 }

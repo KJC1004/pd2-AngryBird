@@ -5,6 +5,11 @@ BigBird::BigBird(float size_ratio, QPointF pos, QPixmap bird): Bird(size_ratio,p
 
 }
 
+BigBird::~BigBird()
+{
+
+}
+
 void BigBird::special()
 {
     used=true;

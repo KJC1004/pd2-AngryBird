@@ -5,6 +5,11 @@ YellowBird::YellowBird(float size_ratio, QPointF pos, QPixmap bird): Bird(size_r
 
 }
 
+YellowBird::~YellowBird()
+{
+
+}
+
 void YellowBird::special()
 {
     used=true;

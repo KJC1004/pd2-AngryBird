@@ -2,6 +2,8 @@
 
 Obstacle::Obstacle(float size_ratio, b2Vec2 pos, QSizeF wh): GameItem(size_ratio)
 {
+    stamina *= 2;
+
     g_size = QSizeF(g_worldsize.height()*ratio*wh.width(),g_worldsize.height()*ratio*wh.height());
     g_pixmap.setPixmap(QPixmap(":/image/image/obstacle.png").scaled(g_scene->height()*ratio*wh.width(),g_scene->height()*ratio*wh.height()));
     g_pixmap.setTransformOriginPoint(g_pixmap.boundingRect().width()/2,g_pixmap.boundingRect().height()/2);

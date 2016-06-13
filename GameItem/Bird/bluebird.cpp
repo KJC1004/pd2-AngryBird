@@ -5,6 +5,11 @@ BlueBird::BlueBird(float size_ratio, QPointF pos, QPixmap bird): Bird(size_ratio
 
 }
 
+BlueBird::~BlueBird()
+{
+
+}
+
 void BlueBird::special()
 {
     used=true;

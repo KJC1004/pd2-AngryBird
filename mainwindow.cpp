@@ -21,8 +21,7 @@ void MainWindow::showEvent(QShowEvent *)
 
 bool MainWindow::eventFilter(QObject *, QEvent *event)
 {
-    if(gameEnded || birdie==NULL) return false;
-    if(birdie->launched && birdie->used) return false;
+    if(gameEnded || birdie==NULL || birdie->used) return false;
     if(event->type()==QEvent::MouseButtonPress)
     {
         if(birdie->launched)
@@ -35,7 +34,7 @@ bool MainWindow::eventFilter(QObject *, QEvent *event)
             dy=0;
         }
     }
-    if(event->type()==QEvent::MouseMove && drag)
+    if(drag && nextRound<0 && event->type()==QEvent::MouseMove)
     {
         dx = QCursor::pos().x()-start.x();
         dy = QCursor::pos().y()-start.y();
@@ -45,10 +44,13 @@ bool MainWindow::eventFilter(QObject *, QEvent *event)
         dy = dy*(dl>V_MAX? V_MAX: dl)/dl;
         birdie->setBirdPos(origin,dx,dy);
     }
-    if(event->type()==QEvent::MouseButtonRelease && drag)
+    if(drag && nextRound<0 && event->type()==QEvent::MouseButtonRelease)
     {
         drag = false;
-        birdie->launch(b2Vec2((float)-dx*0.2,(float)dy*0.2));
+        nextRound=2*FPS;
+        birdie->launch(b2Vec2((float)-dx*0.25,(float)dy*0.25));
+        connect(timer,SIGNAL(timeout()),this,SLOT(checkStable()));
+        ui->label_Remain->setText("x "+QString::number(--GameItem::birdCount));
     }
     return false;
 }
@@ -58,40 +60,6 @@ void MainWindow::closeEvent(QCloseEvent *)
     emit quitGame();
 }
 
-void MainWindow::order()
-{
-    if(GameItem::birdCount==0 || GameItem::pigCount==0)
-    {
-        ui->label_Result->setText((GameItem::pigCount==0? "WIN": "LOSE"));
-        GameItem::score+=10000*GameItem::birdCount;
-        gameEnded=true;
-        return;
-    }
-    switch(birds[0])
-    {
-        case 1: birdie = new RedBird(0.1,origin,QPixmap(":/image/image/red.png"));      break;
-        case 2: birdie = new YellowBird(0.1,origin,QPixmap(":/image/image/yellow.png"));break;
-        case 3: birdie = new BlueBird(0.07,origin,QPixmap(":/image/image/blue.png"));   break;
-        case 4: birdie = new BigBird(0.15,origin,QPixmap(":/image/image/big.png"));     break;
-        default: birdie = NULL; break;
-    }
-    birds.removeFirst();
-    ui->label_Remain->setText("x "+QString::number(--GameItem::birdCount));
-    connect(birdie,SIGNAL(dead()),this,SLOT(order()));
-    itemList.push_back(birdie);
-}
-
-void MainWindow::nextFrame()
-{
-    world->Step(1.0/FPS,6,2);
-    scene->update();
-}
-
-void MainWindow::setScore()
-{
-    ui->label_Score->setText("SCORE  :  "+QString::number((int)GameItem::score));
-}
-
 void MainWindow::initGame()
 {
     timer = new QTimer();
@@ -99,8 +67,7 @@ void MainWindow::initGame()
 
     drag = false;
     gameEnded = false;
-    ui->label_Result->setText("");
-    ui->label_Score->setText("");
+    nextRound = -1;
 
     world = new b2World(b2Vec2(0.0f, -20.0f));
     world->SetContactListener(new GameListener());
@@ -131,7 +98,58 @@ void MainWindow::initGame()
     order();
 
     connect(timer,SIGNAL(timeout()),this,SLOT(nextFrame()));
-    connect(timer,SIGNAL(timeout()),this,SLOT(setScore()));
+
+    ui->label_Remain->setText("x "+QString::number(GameItem::birdCount));
+    ui->label_Result->setText("");
+    ui->label_Score->setText("");
+}
+
+void MainWindow::order()
+{
+    drag=false;
+    if(GameItem::birdCount==0 || GameItem::pigCount==0)
+    {
+        ui->label_Result->setText((GameItem::pigCount==0? "WIN": "LOSE"));
+        GameItem::score+=10000*GameItem::birdCount;
+        gameEnded=true;
+        return;
+    }
+    switch(birds[0])
+    {
+        case 1: birdie = new RedBird(0.1,origin,QPixmap(":/image/image/red.png"));      break;
+        case 2: birdie = new YellowBird(0.1,origin,QPixmap(":/image/image/yellow.png"));break;
+        case 3: birdie = new BlueBird(0.07,origin,QPixmap(":/image/image/blue.png"));   break;
+        case 4: birdie = new BigBird(0.15,origin,QPixmap(":/image/image/big.png"));     break;
+        default: birdie = NULL; break;
+    }
+    birds.removeFirst();
+    itemList.push_back(birdie);
+}
+
+void MainWindow::nextFrame()
+{
+    world->Step(1.0/FPS,6,2);
+    scene->update();
+    ui->label_Score->setText("SCORE  :  "+QString::number((int)GameItem::score));
+}
+
+void MainWindow::checkStable()
+{
+    b2Body *bodyList = world->GetBodyList();
+    while(bodyList!=NULL)
+    {
+        if(bodyList->GetLinearVelocity().Length()>1)
+        {
+            nextRound=2*FPS;
+            return;
+        }
+        bodyList = bodyList->GetNext();
+    }
+    if(--nextRound<0)
+    {
+        disconnect(timer,SIGNAL(timeout()),this,SLOT(checkStable()));
+        order();
+    }
 }
 
 void MainWindow::on_powerButton_clicked()
@@ -145,6 +163,9 @@ void MainWindow::on_playButton_pressed()
     delete timer;
     delete world;
     delete scene;
-    itemList.clear();
+    //itemList.clear();
+    //memory leak, not fixed
     initGame();
 }
+
+

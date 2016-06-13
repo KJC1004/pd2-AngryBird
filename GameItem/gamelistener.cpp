@@ -5,6 +5,11 @@ GameListener::GameListener()
 
 }
 
+GameListener::~GameListener()
+{
+
+}
+
 void GameListener::PostSolve(b2Contact *contact, const b2ContactImpulse *impulse)
 {
     if(GameItem::invulnerability) return;

@@ -9,7 +9,6 @@
 #include <QTransform>
 #include <QtMath>
 #include "GameItem/gamelistener.h"
-#include <iostream>
 
 class GameItem : public QObject
 {
@@ -22,22 +21,18 @@ public:
     ~GameItem();
     static void initGameItem(QSizeF,QSizeF,b2World *,QGraphicsScene *,QTimer *,int);
 
-signals:
-    void dead();
-
 public slots:
     void paint();
     void die();
     void checkPos();
     void checkVelocity();
-    // TODO virtual void collide();
 
 protected:
     b2Body *g_body;
     QGraphicsPixmapItem g_pixmap;
     QSizeF g_size;
     bool vulnerable=false;
-    int death=120;
+    int deathCountDown = 120;
     float stamina, ratio;
 
     const static float maxStamina;

@@ -2,9 +2,9 @@
 
 Pig::Pig(float size_ratio, b2Vec2 pos): GameItem(size_ratio)
 {
-    stamina *= ratio/0.1;
-    prize *= ratio/0.1;
-    GameItem::pigCount++;
+    stamina *= ratio*3;
+    prize *= ratio*10;
+    ++GameItem::pigCount;
     vulnerable=true;
 
     g_size = QSizeF(g_worldsize.height()*ratio,g_worldsize.height()*ratio);
@@ -27,7 +27,7 @@ Pig::Pig(float size_ratio, b2Vec2 pos): GameItem(size_ratio)
     fixturedef.friction = PIG_FRICTION;
     fixturedef.restitution = PIG_RESTITUTION;
     g_body->CreateFixture(&fixturedef);
-    g_body->SetAngularDamping(1);
+    g_body->SetAngularDamping(3);
 
     paint();
     g_scene->addItem(&g_pixmap);
@@ -38,6 +38,6 @@ Pig::Pig(float size_ratio, b2Vec2 pos): GameItem(size_ratio)
 
 Pig::~Pig()
 {
-    GameItem::pigCount--;
+    --GameItem::pigCount;
     GameItem::score+=prize;
 }

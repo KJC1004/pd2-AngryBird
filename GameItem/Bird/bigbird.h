@@ -6,6 +6,7 @@ class BigBird: public Bird
 {    
 public:
     BigBird(float,QPointF,QPixmap);
+    virtual ~BigBird();
     virtual void special();
 };
 

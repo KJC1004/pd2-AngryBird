@@ -19,3 +19,8 @@ Land::Land(float size_ratio, bool WH): GameItem(size_ratio)
     g_scene->addItem(&g_pixmap);
     paint();
 }
+
+Land::~Land()
+{
+
+}

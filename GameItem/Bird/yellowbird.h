@@ -7,6 +7,7 @@ class YellowBird: public Bird
 {
 public:
     YellowBird(float,QPointF,QPixmap);
+    virtual ~YellowBird();
     virtual void special();
 };
 

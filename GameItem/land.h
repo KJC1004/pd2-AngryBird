@@ -7,6 +7,7 @@ class Land : public GameItem
 {
 public:
     Land(float,bool);
+    virtual ~Land();
 };
 
 #endif // LAND_H

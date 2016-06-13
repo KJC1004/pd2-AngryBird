@@ -9,6 +9,7 @@ class Bird : public GameItem
 {
 public:
     Bird(float,QPointF,QPixmap);
+    virtual ~Bird();
     void setBirdPos(QPointF,int,int);
     void launch(b2Vec2);
     virtual void special()=0;

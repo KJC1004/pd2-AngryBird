@@ -7,6 +7,7 @@ class RedBird: public Bird
 {
 public:
     RedBird(float,QPointF,QPixmap);
+    virtual ~RedBird();
     virtual void special();
 };
 

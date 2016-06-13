@@ -9,7 +9,7 @@ class Obstacle: public GameItem
 {
 public:
     Obstacle(float,b2Vec2,QSizeF);
-    ~Obstacle();
+    virtual ~Obstacle();
 };
 
 #endif // OBSTACLE_H

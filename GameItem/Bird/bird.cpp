@@ -5,8 +5,12 @@ Bird::Bird(float size_ratio, QPointF pos,QPixmap bird): GameItem(size_ratio)
     g_pixmap.setPixmap(bird.scaled(g_scene->height()*ratio,g_scene->height()*ratio));
     g_pixmap.setPos(pos.x()-g_pixmap.pixmap().width()/2,pos.y()-g_pixmap.pixmap().height()/2);
     g_pixmap.setTransformOriginPoint(g_pixmap.boundingRect().width()/2,g_pixmap.boundingRect().height()/2);
-
     g_scene->addItem(&g_pixmap);
+}
+
+Bird::~Bird()
+{
+
 }
 
 void Bird::setBirdPos(QPointF origin, int dx, int dy)

@@ -39,6 +39,7 @@ signals:
 private slots:
     void nextFrame();
     void checkStable();
+    void checkStatus();
     void on_powerButton_clicked();
     void on_playButton_pressed();
 
@@ -47,7 +48,7 @@ private:
     QGraphicsScene *scene;
     QList<GameItem *> itemList;
     QList<int> birds;
-    QTimer *timer;
+    QTimer *timer, *timer_check;
     QPoint start;
     QPointF origin;
     int dx, dy, dl, nextRound=-1;

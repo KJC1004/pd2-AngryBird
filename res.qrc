@@ -11,5 +11,6 @@
         <file>image/playbutton.png</file>
         <file>image/powerbutton.png</file>
         <file>image/obstacle.png</file>
+        <file>image/background.jpg</file>
     </qresource>
 </RCC>

@@ -76,7 +76,7 @@ public:
         label_Sample->setStyleSheet(QStringLiteral("image: url(:/image/image/red.png);"));
         label_Remain = new QLabel(centralWidget);
         label_Remain->setObjectName(QStringLiteral("label_Remain"));
-        label_Remain->setGeometry(QRect(320, 150, 150, 150));
+        label_Remain->setGeometry(QRect(320, 150, 300, 150));
         label_Remain->setStyleSheet(QStringLiteral("font: 75 65pt \"Smudger LET\";"));
         label_Result = new QLabel(centralWidget);
         label_Result->setObjectName(QStringLiteral("label_Result"));

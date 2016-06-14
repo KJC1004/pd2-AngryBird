@@ -21,8 +21,8 @@ void Bird::setBirdPos(QPointF origin, int dx, int dy)
 void Bird::launch(b2Vec2 velocity)
 {
     invulnerability=false;
-
     launched = true;
+
     g_size = QSizeF(g_worldsize.height()*ratio,g_worldsize.height()*ratio);
     QPointF mapped;
     mapped.setX((g_pixmap.x()+g_pixmap.pixmap().width()/2)/g_windowsize.width()*g_worldsize.width());
@@ -49,7 +49,7 @@ void Bird::launch(b2Vec2 velocity)
     g_body->SetLinearVelocity(velocity);
 
     connect(g_timer, SIGNAL(timeout()), this,SLOT(paint()));
-    connect(g_timer, SIGNAL(timeout()), this, SLOT(checkPos()));
-    connect(g_timer, SIGNAL(timeout()), this, SLOT(checkVelocity()));
+    connect(g_timer_check, SIGNAL(timeout()), this, SLOT(checkPos()));
+    connect(g_timer_check, SIGNAL(timeout()), this, SLOT(checkVelocity()));
 }
 

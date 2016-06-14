@@ -12,7 +12,6 @@ BigBird::~BigBird()
 
 void BigBird::special()
 {
-    used=true;
     b2Fixture *fixture = g_body->GetFixtureList();    
     fixture->SetFriction(1);
     fixture->SetDensity(fixture->GetDensity()*1000);

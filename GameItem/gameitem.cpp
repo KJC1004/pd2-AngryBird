@@ -14,6 +14,7 @@ GameItem::~GameItem()
 b2World *GameItem::g_world = NULL;
 QGraphicsScene *GameItem::g_scene = NULL;
 QTimer *GameItem::g_timer = NULL;
+QTimer *GameItem::g_timer_check = NULL;
 QSizeF GameItem::g_windowsize = QSizeF();
 QSizeF GameItem::g_worldsize = QSizeF();
 const float GameItem::maxStamina = 5000.0;
@@ -21,13 +22,14 @@ bool GameItem::invulnerability=true;
 int GameItem::pigCount = 0;
 int GameItem::birdCount = 0;
 float GameItem::score = 0;
-void GameItem::initGameItem(QSizeF worldsize, QSizeF windowsize, b2World *world, QGraphicsScene *scene, QTimer *timer, int count)
+void GameItem::initGameItem(QSizeF worldsize, QSizeF windowsize, b2World *world, QGraphicsScene *scene, QTimer *timer, QTimer *timer_check, int count)
 {
     g_worldsize = worldsize;
     g_windowsize = windowsize;
     g_world = world;
     g_scene = scene;
     g_timer = timer;
+    g_timer_check = timer_check;
     pigCount=0;
     birdCount=count;
     score=0;
@@ -59,8 +61,8 @@ void GameItem::checkPos()
 
 void GameItem::checkVelocity()
 {
-    if(g_body->GetLinearVelocity().Length()>1.5)
-        deathCountDown=120;
+    if(g_body->GetLinearVelocity().Length()>1)
+        deathCountDown=4;
     else if(--deathCountDown<0)
         connect(g_timer,SIGNAL(timeout()),this,SLOT(die()));
 }

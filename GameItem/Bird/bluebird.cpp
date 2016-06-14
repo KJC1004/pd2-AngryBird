@@ -12,7 +12,6 @@ BlueBird::~BlueBird()
 
 void BlueBird::special()
 {
-    used=true;
     Bird *duplicate;
     b2Vec2 v = g_body->GetLinearVelocity();
     duplicate = new BlueBird(ratio,g_pixmap.pos()+QPointF(0,g_pixmap.pixmap().height()),g_pixmap.pixmap());

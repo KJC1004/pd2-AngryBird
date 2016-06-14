@@ -21,11 +21,14 @@ void MainWindow::showEvent(QShowEvent *)
 
 bool MainWindow::eventFilter(QObject *, QEvent *event)
 {
-    if(gameEnded || birdie==NULL || birdie->used) return false;
+    if(gameEnded || birdie==NULL) return false;
     if(event->type()==QEvent::MouseButtonPress)
     {
         if(birdie->launched)
+        {
                 birdie->special();
+                birdie=NULL;
+        }
         else
         {
             drag = true;
@@ -47,9 +50,10 @@ bool MainWindow::eventFilter(QObject *, QEvent *event)
     if(drag && nextRound<0 && event->type()==QEvent::MouseButtonRelease)
     {
         drag = false;
-        nextRound=2*FPS;
+        nextRound=4;
         birdie->launch(b2Vec2((float)-dx*0.25,(float)dy*0.25));
-        connect(timer,SIGNAL(timeout()),this,SLOT(checkStable()));
+        disconnect(timer_check,SIGNAL(timeout()),this,SLOT(checkStatus()));
+        connect(timer_check,SIGNAL(timeout()),this,SLOT(checkStable()));
         ui->label_Remain->setText("x "+QString::number(--GameItem::birdCount));
     }
     return false;
@@ -64,6 +68,8 @@ void MainWindow::initGame()
 {
     timer = new QTimer();
     timer->start(1000/FPS);
+    timer_check = new QTimer();
+    timer_check->start(500);
 
     drag = false;
     gameEnded = false;
@@ -72,10 +78,11 @@ void MainWindow::initGame()
     world = new b2World(b2Vec2(0.0f, -20.0f));
     world->SetContactListener(new GameListener());
     scene = new QGraphicsScene(0,0,width(),height());
+    scene->setBackgroundBrush(QImage(":/image/image/background.jpg").scaled(width(),height()));
     ui->graphicsView->setScene(scene);
 
     birds = {1,2,3,4};
-    GameItem::initGameItem(QSizeF(WORLD_W,WORLD_H),size(),world,scene,timer,birds.size());
+    GameItem::initGameItem(QSizeF(WORLD_W,WORLD_H),size(),world,scene,timer,timer_check,birds.size());
     origin = QPointF(width()*0.15, height()*0.6);
 
     QGraphicsPixmapItem *catapult = new QGraphicsPixmapItem();
@@ -83,8 +90,8 @@ void MainWindow::initGame()
     catapult->setPos(origin.x()-catapult->pixmap().width()/2,origin.y()-50);
     scene->addItem(catapult);
 
-    itemList.push_back(new Land(0.1,true));
-    itemList.push_back(new Land(0.1,false));
+    itemList.push_back(new Land(0,b2Vec2(WORLD_W*0.5,0),QSizeF(WORLD_W,WORLD_H*0.2),true));
+    itemList.push_back(new Land(0,b2Vec2(WORLD_W*1.1,WORLD_H*0.5),QSizeF(WORLD_W*0.2,WORLD_H),false));
     itemList.push_back(new Pig(0.2,b2Vec2(WORLD_W*0.7,WORLD_H*0.2)));
     itemList.push_back(new Obstacle(0.05,b2Vec2(WORLD_W*0.55,WORLD_H*0.2),QSizeF(1,5)));
     itemList.push_back(new Obstacle(0.05,b2Vec2(WORLD_W*0.85,WORLD_H*0.2),QSizeF(1,5)));
@@ -98,6 +105,7 @@ void MainWindow::initGame()
     order();
 
     connect(timer,SIGNAL(timeout()),this,SLOT(nextFrame()));
+    connect(timer_check,SIGNAL(timeout()),this,SLOT(checkStatus()));
 
     ui->label_Remain->setText("x "+QString::number(GameItem::birdCount));
     ui->label_Result->setText("");
@@ -107,13 +115,8 @@ void MainWindow::initGame()
 void MainWindow::order()
 {
     drag=false;
-    if(GameItem::birdCount==0 || GameItem::pigCount==0)
-    {
-        ui->label_Result->setText((GameItem::pigCount==0? "WIN": "LOSE"));
-        GameItem::score+=10000*GameItem::birdCount;
-        gameEnded=true;
-        return;
-    }
+    checkStatus();
+    if(gameEnded || nextRound>0 || birds.size()==0) return;
     switch(birds[0])
     {
         case 1: birdie = new RedBird(0.1,origin,QPixmap(":/image/image/red.png"));      break;
@@ -138,17 +141,33 @@ void MainWindow::checkStable()
     b2Body *bodyList = world->GetBodyList();
     while(bodyList!=NULL)
     {
-        if(bodyList->GetLinearVelocity().Length()>1)
-        {
-            nextRound=2*FPS;
+        if(bodyList->GetLinearVelocity().Length()>1)        {
+            nextRound=4;
             return;
         }
         bodyList = bodyList->GetNext();
     }
     if(--nextRound<0)
     {
-        disconnect(timer,SIGNAL(timeout()),this,SLOT(checkStable()));
+        disconnect(timer_check,SIGNAL(timeout()),this,SLOT(checkStable()));
+        connect(timer_check,SIGNAL(timeout()),this,SLOT(checkStatus()));
         order();
+    }
+}
+
+void MainWindow::checkStatus()
+{
+    if(GameItem::birdCount==0)
+    {
+        gameEnded=true;
+        ui->label_Result->setText("LOSE");
+    }
+    if(GameItem::pigCount==0)
+    {
+        gameEnded=true;
+        ui->label_Result->setText("WIN");
+        GameItem::score+=10000*GameItem::birdCount;
+        disconnect(timer_check,SIGNAL(timeout()),this,SLOT(checkStatus()));
     }
 }
 
@@ -161,6 +180,7 @@ void MainWindow::on_playButton_pressed()
 {
     gameEnded=true;
     delete timer;
+    delete timer_check;
     delete world;
     delete scene;
     //itemList.clear();

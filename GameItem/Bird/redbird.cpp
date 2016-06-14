@@ -12,5 +12,5 @@ RedBird::~RedBird()
 
 void RedBird::special()
 {
-    used=true;
+
 }

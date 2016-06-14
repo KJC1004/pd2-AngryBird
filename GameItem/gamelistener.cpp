@@ -13,10 +13,8 @@ GameListener::~GameListener()
 void GameListener::PostSolve(b2Contact *contact, const b2ContactImpulse *impulse)
 {
     if(GameItem::invulnerability) return;
-    b2Body *bodyA = contact->GetFixtureA()->GetBody();
-    b2Body *bodyB = contact->GetFixtureB()->GetBody();
-    GameItem *gameitemA = (GameItem*)bodyA->GetUserData();
-    GameItem *gameitemB = (GameItem*)bodyB->GetUserData();
+    GameItem *gameitemA = (GameItem*)contact->GetFixtureA()->GetBody()->GetUserData();
+    GameItem *gameitemB = (GameItem*)contact->GetFixtureB()->GetBody()->GetUserData();
     if(!gameitemA->vulnerable && !gameitemB->vulnerable) return;
     float damage=0;
 

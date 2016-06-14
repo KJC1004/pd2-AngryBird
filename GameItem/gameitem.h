@@ -19,7 +19,7 @@ friend class MainWindow;
 public:
     GameItem(float);
     ~GameItem();
-    static void initGameItem(QSizeF,QSizeF,b2World *,QGraphicsScene *,QTimer *,int);
+    static void initGameItem(QSizeF,QSizeF,b2World*,QGraphicsScene*,QTimer*,QTimer*,int);
 
 public slots:
     void paint();
@@ -32,7 +32,7 @@ protected:
     QGraphicsPixmapItem g_pixmap;
     QSizeF g_size;
     bool vulnerable=false;
-    int deathCountDown = 120;
+    int deathCountDown=4;
     float stamina, ratio;
 
     const static float maxStamina;
@@ -41,7 +41,7 @@ protected:
     static float score;
     static b2World *g_world;
     static QGraphicsScene *g_scene;
-    static QTimer *g_timer;
+    static QTimer *g_timer, *g_timer_check;
     static QSizeF g_worldsize, g_windowsize;
 };
 

@@ -20,7 +20,6 @@ void Bird::setBirdPos(QPointF origin, int dx, int dy)
 
 void Bird::launch(b2Vec2 velocity)
 {
-    invulnerability=false;
     launched = true;
 
     g_size = QSizeF(g_worldsize.height()*ratio,g_worldsize.height()*ratio);

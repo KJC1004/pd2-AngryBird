@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     qApp->installEventFilter(this);
+    qsrand(QTime::currentTime().second());
 }
 
 MainWindow::~MainWindow()
@@ -21,37 +22,39 @@ void MainWindow::showEvent(QShowEvent *)
 
 bool MainWindow::eventFilter(QObject *, QEvent *event)
 {
-    if(gameEnded || birdie==NULL) return false;
-    if(event->type()==QEvent::MouseButtonPress)
+    if(gameEnded || birdie==NULL || GameItem::invulnerability) return false;
+    QMouseEvent* mouseEvent = (QMouseEvent*)event;
+    if(!drag && event->type()==QEvent::MouseButtonPress)
     {
         if(birdie->launched)
         {
                 birdie->special();
                 birdie=NULL;
         }
-        else
+        else if(launchBox.contains(mouseEvent->pos()) && nextRound<0)
         {
-            drag = true;
-            start = QCursor::pos();
-            dx=0;
+            drag = true;            
+            start = mouseEvent->pos();//QCursor::pos();
+            dx=0;//
             dy=0;
         }
     }
-    if(drag && nextRound<0 && event->type()==QEvent::MouseMove)
+    if(!drag || nextRound>=0) return false;
+    if(event->type()==QEvent::MouseMove)
     {
-        dx = QCursor::pos().x()-start.x();
-        dy = QCursor::pos().y()-start.y();
+        dx = mouseEvent->pos().x()-start.x();
+        dy = mouseEvent->pos().y()-start.y();
         dl = pow(pow(dx,2)+pow(dy,2),0.5);
-        dl = (dl==0? 1: dl);
+        dl = (dl<1? 1: dl);
         dx = dx*(dl>V_MAX? V_MAX: dl)/dl;
         dy = dy*(dl>V_MAX? V_MAX: dl)/dl;
         birdie->setBirdPos(origin,dx,dy);
     }
-    if(drag && nextRound<0 && event->type()==QEvent::MouseButtonRelease)
+    if(event->type()==QEvent::MouseButtonRelease)
     {
         drag = false;
         nextRound=4;
-        birdie->launch(b2Vec2((float)-dx*0.25,(float)dy*0.25));
+        birdie->launch(b2Vec2((float)-dx*0.4,(float)dy*0.4));
         disconnect(timer_check,SIGNAL(timeout()),this,SLOT(checkStatus()));
         connect(timer_check,SIGNAL(timeout()),this,SLOT(checkStable()));
         ui->label_Remain->setText("x "+QString::number(--GameItem::birdCount));
@@ -73,7 +76,7 @@ void MainWindow::initGame()
 
     drag = false;
     gameEnded = false;
-    nextRound = -1;
+    nextRound = 1;
 
     world = new b2World(b2Vec2(0.0f, -20.0f));
     world->SetContactListener(new GameListener());
@@ -82,30 +85,31 @@ void MainWindow::initGame()
     ui->graphicsView->setScene(scene);
 
     birds = {1,2,3,4};
-    GameItem::initGameItem(QSizeF(WORLD_W,WORLD_H),size(),world,scene,timer,timer_check,birds.size());
-    origin = QPointF(width()*0.15, height()*0.6);
+    GameItem::initGameItem(QSizeF(WORLD_W,WORLD_H),size(),world,scene,timer,timer_check,&itemList,birds.size());
+    origin = QPointF(width()*0.1, height()*0.75);
 
     QGraphicsPixmapItem *catapult = new QGraphicsPixmapItem();
-    catapult->setPixmap(QPixmap(":/image/image/catapult.png").scaled(height()/7,height()/2.5));
-    catapult->setPos(origin.x()-catapult->pixmap().width()/2,origin.y()-50);
+    catapult->setPixmap(QPixmap(":/image/image/catapult.png").scaled(height()*0.1,height()*0.2));
+    catapult->setPos(origin.x()-catapult->pixmap().width()/2,origin.y()-25);
     scene->addItem(catapult);
 
     itemList.push_back(new Land(0,b2Vec2(WORLD_W*0.5,0),QSizeF(WORLD_W,WORLD_H*0.2),true));
-    itemList.push_back(new Land(0,b2Vec2(WORLD_W*1.1,WORLD_H*0.5),QSizeF(WORLD_W*0.2,WORLD_H),false));
-    itemList.push_back(new Pig(0.2,b2Vec2(WORLD_W*0.7,WORLD_H*0.2)));
-    itemList.push_back(new Obstacle(0.05,b2Vec2(WORLD_W*0.55,WORLD_H*0.2),QSizeF(1,5)));
-    itemList.push_back(new Obstacle(0.05,b2Vec2(WORLD_W*0.85,WORLD_H*0.2),QSizeF(1,5)));
-    itemList.push_back(new Obstacle(0.05,b2Vec2(WORLD_W*0.7,WORLD_H*0.4),QSizeF(12,1)));
-    itemList.push_back(new Pig(0.15,b2Vec2(WORLD_W*0.7,WORLD_H*0.5)));
-    itemList.push_back(new Obstacle(0.05,b2Vec2(WORLD_W*0.6,WORLD_H*0.55),QSizeF(1,4)));
-    itemList.push_back(new Obstacle(0.05,b2Vec2(WORLD_W*0.8,WORLD_H*0.55),QSizeF(1,4)));
-    itemList.push_back(new Obstacle(0.05,b2Vec2(WORLD_W*0.7,WORLD_H*0.65),QSizeF(8,1)));
-    itemList.push_back(new Pig(0.1,b2Vec2(WORLD_W*0.7,WORLD_H*0.7)));
 
-    order();
+    for(float i=0.5; i<=0.81; i+=0.1)
+    {
+        for(float j=0.2; j<=1.01; j+=0.2)
+        {
+            itemList.push_back(new Pig(0.07,b2Vec2(WORLD_W*i,WORLD_H*j)));
+            itemList.push_back(new Obstacle(b2Vec2(WORLD_W*i,WORLD_H*(j+0.07)),QSizeF(17, 2)));
+            itemList.push_back(new Obstacle(b2Vec2(WORLD_W*(i-0.04),WORLD_H*j),QSizeF(2.5,11)));
+            itemList.push_back(new Obstacle(b2Vec2(WORLD_W*(i+0.04),WORLD_H*j),QSizeF(2.5,11)));
+        }
+    }
 
     connect(timer,SIGNAL(timeout()),this,SLOT(nextFrame()));
-    connect(timer_check,SIGNAL(timeout()),this,SLOT(checkStatus()));
+    connect(timer,SIGNAL(timeout()),this,SLOT(clearWasted()));
+    connect(timer_check,SIGNAL(timeout()),this,SLOT(checkStable()));
+    //connect(timer_check,SIGNAL(timeout()),this,SLOT(checkStatus()));
 
     ui->label_Remain->setText("x "+QString::number(GameItem::birdCount));
     ui->label_Result->setText("");
@@ -119,14 +123,16 @@ void MainWindow::order()
     if(gameEnded || nextRound>0 || birds.size()==0) return;
     switch(birds[0])
     {
-        case 1: birdie = new RedBird(0.1,origin,QPixmap(":/image/image/red.png"));      break;
-        case 2: birdie = new YellowBird(0.1,origin,QPixmap(":/image/image/yellow.png"));break;
-        case 3: birdie = new BlueBird(0.07,origin,QPixmap(":/image/image/blue.png"));   break;
-        case 4: birdie = new BigBird(0.15,origin,QPixmap(":/image/image/big.png"));     break;
+        case 1: birdie = new RedBird(0.07,origin,QPixmap(":/image/image/red.png"));      break;
+        case 2: birdie = new YellowBird(0.07,origin,QPixmap(":/image/image/yellow.png"));break;
+        case 3: birdie = new BlueBird(0.05,origin,QPixmap(":/image/image/blue.png"));   break;
+        case 4: birdie = new BigBird(0.1,origin,QPixmap(":/image/image/big.png"));     break;
         default: birdie = NULL; break;
     }
     birds.removeFirst();
     itemList.push_back(birdie);
+    QPointF temp = QPointF(birdie->g_pixmap.pixmap().width()/2,birdie->g_pixmap.pixmap().height()/2);
+    launchBox = QRectF(origin-temp,origin+temp);
 }
 
 void MainWindow::nextFrame()
@@ -134,6 +140,19 @@ void MainWindow::nextFrame()
     world->Step(1.0/FPS,6,2);
     scene->update();
     ui->label_Score->setText("SCORE  :  "+QString::number((int)GameItem::score));
+}
+
+void MainWindow::clearWasted()
+{
+    for(int i=0; i<itemList.size(); ++i)
+    {
+        if(itemList[i]->wasted)
+        {
+            delete itemList[i];
+            itemList.erase(itemList.begin()+i);
+            --i;
+        }
+    }
 }
 
 void MainWindow::checkStable()
@@ -149,6 +168,7 @@ void MainWindow::checkStable()
     }
     if(--nextRound<0)
     {
+        GameItem::invulnerability=false;
         disconnect(timer_check,SIGNAL(timeout()),this,SLOT(checkStable()));
         connect(timer_check,SIGNAL(timeout()),this,SLOT(checkStatus()));
         order();
@@ -176,16 +196,15 @@ void MainWindow::on_powerButton_clicked()
     close();
 }
 
-void MainWindow::on_playButton_pressed()
+void MainWindow::on_playButton_clicked()
 {
     gameEnded=true;
     delete timer;
     delete timer_check;
+    for(int i=0; i<itemList.size(); ++i)
+        delete itemList[i];
+    itemList.clear();
     delete world;
     delete scene;
-    //itemList.clear();
-    //memory leak, not fixed
     initGame();
 }
-
-

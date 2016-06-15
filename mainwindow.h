@@ -6,14 +6,17 @@
 #include <QGraphicsPixmapItem>
 #include <QList>
 #include <QTimer>
+#include <QTime>
 #include <QMouseEvent>
 #include <Box2D/Box2D.h>
 #include "GameItem/Angry.h"
 
+#include <iostream>
+
 #define WORLD_W 64
 #define WORLD_H 36
 #define FPS 60.0f
-#define V_MAX 200
+#define V_MAX 100
 
 namespace Ui {
 class MainWindow;
@@ -38,10 +41,11 @@ signals:
 
 private slots:
     void nextFrame();
+    void clearWasted();
     void checkStable();
     void checkStatus();
     void on_powerButton_clicked();
-    void on_playButton_pressed();
+    void on_playButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -49,10 +53,10 @@ private:
     QList<GameItem *> itemList;
     QList<int> birds;
     QTimer *timer, *timer_check;
-    QPoint start;
-    QPointF origin;
-    int dx, dy, dl, nextRound=-1;
-    bool drag=false, gameEnded=false;
+    QPointF start, origin;
+    QRectF launchBox;
+    int dx, dy, dl, nextRound;
+    bool drag, gameEnded;
     b2World *world;
     Bird *birdie;
 };

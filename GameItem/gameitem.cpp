@@ -8,7 +8,8 @@ GameItem::GameItem(float size_ratio): ratio(size_ratio)
 
 GameItem::~GameItem()
 {
-    g_world->DestroyBody(g_body);
+    if(g_body!=NULL)
+        g_world->DestroyBody(g_body);
 }
 
 b2World *GameItem::g_world = NULL;
@@ -17,12 +18,13 @@ QTimer *GameItem::g_timer = NULL;
 QTimer *GameItem::g_timer_check = NULL;
 QSizeF GameItem::g_windowsize = QSizeF();
 QSizeF GameItem::g_worldsize = QSizeF();
-const float GameItem::maxStamina = 5000.0;
+QList<GameItem *> *GameItem::list = NULL;
+const float GameItem::maxStamina = 2000.0;
 bool GameItem::invulnerability=true;
 int GameItem::pigCount = 0;
 int GameItem::birdCount = 0;
 float GameItem::score = 0;
-void GameItem::initGameItem(QSizeF worldsize, QSizeF windowsize, b2World *world, QGraphicsScene *scene, QTimer *timer, QTimer *timer_check, int count)
+void GameItem::initGameItem(QSizeF worldsize, QSizeF windowsize, b2World *world, QGraphicsScene *scene, QTimer *timer, QTimer *timer_check,QList<GameItem*> *itemList, int count)
 {
     g_worldsize = worldsize;
     g_windowsize = windowsize;
@@ -30,6 +32,7 @@ void GameItem::initGameItem(QSizeF worldsize, QSizeF windowsize, b2World *world,
     g_scene = scene;
     g_timer = timer;
     g_timer_check = timer_check;
+    list = itemList;
     pigCount=0;
     birdCount=count;
     score=0;
@@ -47,16 +50,11 @@ void GameItem::paint()
     g_pixmap.setRotation(-(g_body->GetAngle()*180/3.14159));
 }
 
-void GameItem::die()
-{
-    delete this;
-}
-
 void GameItem::checkPos()
 {
     b2Vec2 pos = g_body->GetPosition();
     if(pos.x<0.0f || pos.x>g_worldsize.width() || pos.y<0)
-        die();
+        wasted=true;
 }
 
 void GameItem::checkVelocity()
@@ -64,5 +62,5 @@ void GameItem::checkVelocity()
     if(g_body->GetLinearVelocity().Length()>1)
         deathCountDown=4;
     else if(--deathCountDown<0)
-        connect(g_timer,SIGNAL(timeout()),this,SLOT(die()));
+        wasted=true;
 }

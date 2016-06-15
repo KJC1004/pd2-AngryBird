@@ -16,11 +16,8 @@ void BlueBird::special()
     b2Vec2 v = g_body->GetLinearVelocity();
     duplicate = new BlueBird(ratio,g_pixmap.pos()+QPointF(0,g_pixmap.pixmap().height()),g_pixmap.pixmap());
     duplicate->launch(b2Vec2(v.x,v.y-5));
-    duplicate->connect(g_timer,SIGNAL(timeout()),duplicate,SLOT(checkPos()));
-    duplicate->connect(g_timer,SIGNAL(timeout()),duplicate,SLOT(checkVelocity()));
-
+    list->push_back(duplicate);
     duplicate = new BlueBird(ratio,g_pixmap.pos()-QPointF(0,g_pixmap.pixmap().height()),g_pixmap.pixmap());
     duplicate->launch(b2Vec2(v.x,v.y+5));
-    duplicate->connect(g_timer,SIGNAL(timeout()),duplicate,SLOT(checkPos()));
-    duplicate->connect(g_timer,SIGNAL(timeout()),duplicate,SLOT(checkVelocity()));
+    list->push_back(duplicate);
 }

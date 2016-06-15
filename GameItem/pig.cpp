@@ -2,8 +2,8 @@
 
 Pig::Pig(float size_ratio, b2Vec2 pos): GameItem(size_ratio)
 {
-    stamina *= ratio*3;
-    prize *= ratio*10;
+    stamina *= 0.5;
+
     ++GameItem::pigCount;
     vulnerable=true;
 

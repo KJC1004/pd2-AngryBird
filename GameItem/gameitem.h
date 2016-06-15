@@ -10,6 +10,8 @@
 #include <QtMath>
 #include "GameItem/gamelistener.h"
 
+#include <iostream>
+
 class GameItem : public QObject
 {
     Q_OBJECT
@@ -19,19 +21,18 @@ friend class MainWindow;
 public:
     GameItem(float);
     ~GameItem();
-    static void initGameItem(QSizeF,QSizeF,b2World*,QGraphicsScene*,QTimer*,QTimer*,int);
+    static void initGameItem(QSizeF,QSizeF,b2World*,QGraphicsScene*,QTimer*,QTimer*,QList<GameItem*>*,int);
 
 public slots:
     void paint();
-    void die();
     void checkPos();
     void checkVelocity();
 
 protected:
-    b2Body *g_body;
+    b2Body *g_body=NULL;
     QGraphicsPixmapItem g_pixmap;
     QSizeF g_size;
-    bool vulnerable=false;
+    bool vulnerable=false, wasted=false;
     int deathCountDown=4;
     float stamina, ratio;
 
@@ -43,6 +44,7 @@ protected:
     static QGraphicsScene *g_scene;
     static QTimer *g_timer, *g_timer_check;
     static QSizeF g_worldsize, g_windowsize;
+    static QList<GameItem *> *list;
 };
 
 #endif // GAMEITEM_H

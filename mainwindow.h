@@ -11,8 +11,6 @@
 #include <Box2D/Box2D.h>
 #include "GameItem/Angry.h"
 
-#include <iostream>
-
 #define WORLD_W 64
 #define WORLD_H 36
 #define FPS 60.0f
@@ -54,7 +52,7 @@ private:
     QList<int> birds;
     QTimer *timer, *timer_check;
     QPointF start, origin;
-    QRectF launchBox;
+    QRectF dragBox;
     int dx, dy, dl, nextRound;
     bool drag, gameEnded;
     b2World *world;

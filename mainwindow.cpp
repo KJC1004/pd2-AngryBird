@@ -22,8 +22,8 @@ void MainWindow::showEvent(QShowEvent *)
 
 bool MainWindow::eventFilter(QObject *, QEvent *event)
 {
-    if(gameEnded || birdie==NULL || GameItem::invulnerability) return false;
     QMouseEvent* mouseEvent = (QMouseEvent*)event;
+    if(gameEnded || birdie==NULL || GameItem::invulnerability || QRectF(0,0,150,300).contains(mouseEvent->pos())) return false;
     if(!drag && event->type()==QEvent::MouseButtonPress)
     {
         if(birdie->launched)
@@ -31,7 +31,7 @@ bool MainWindow::eventFilter(QObject *, QEvent *event)
                 birdie->special();
                 birdie=NULL;
         }
-        else if(launchBox.contains(mouseEvent->pos()) && nextRound<0)
+        else if(dragBox.contains(mouseEvent->pos()) && nextRound<0)
         {
             drag = true;            
             start = mouseEvent->pos();//QCursor::pos();
@@ -95,9 +95,9 @@ void MainWindow::initGame()
 
     itemList.push_back(new Land(0,b2Vec2(WORLD_W*0.5,0),QSizeF(WORLD_W,WORLD_H*0.2),true));
 
-    for(float i=0.5; i<=0.81; i+=0.1)
+    for(float i=0.5; i<=0.91; i+=0.1)
     {
-        for(float j=0.2; j<=1.01; j+=0.2)
+        for(float j=0.2; j<=0.81; j+=0.15)
         {
             itemList.push_back(new Pig(0.07,b2Vec2(WORLD_W*i,WORLD_H*j)));
             itemList.push_back(new Obstacle(b2Vec2(WORLD_W*i,WORLD_H*(j+0.07)),QSizeF(17, 2)));
@@ -109,11 +109,9 @@ void MainWindow::initGame()
     connect(timer,SIGNAL(timeout()),this,SLOT(nextFrame()));
     connect(timer,SIGNAL(timeout()),this,SLOT(clearWasted()));
     connect(timer_check,SIGNAL(timeout()),this,SLOT(checkStable()));
-    //connect(timer_check,SIGNAL(timeout()),this,SLOT(checkStatus()));
 
     ui->label_Remain->setText("x "+QString::number(GameItem::birdCount));
-    ui->label_Result->setText("");
-    ui->label_Score->setText("");
+    ui->label_Result->clear();
 }
 
 void MainWindow::order()
@@ -132,12 +130,12 @@ void MainWindow::order()
     birds.removeFirst();
     itemList.push_back(birdie);
     QPointF temp = QPointF(birdie->g_pixmap.pixmap().width()/2,birdie->g_pixmap.pixmap().height()/2);
-    launchBox = QRectF(origin-temp,origin+temp);
+    dragBox = QRectF(origin-temp,origin+temp);
 }
 
 void MainWindow::nextFrame()
 {
-    world->Step(1.0/FPS,6,2);
+    world->Step(1.0/FPS,10,2);
     scene->update();
     ui->label_Score->setText("SCORE  :  "+QString::number((int)GameItem::score));
 }
@@ -180,12 +178,12 @@ void MainWindow::checkStatus()
     if(GameItem::birdCount==0)
     {
         gameEnded=true;
-        ui->label_Result->setText("LOSE");
+        ui->label_Result->setText("FAIL");
     }
     if(GameItem::pigCount==0)
     {
         gameEnded=true;
-        ui->label_Result->setText("WIN");
+        ui->label_Result->setText("PASS");
         GameItem::score+=10000*GameItem::birdCount;
         disconnect(timer_check,SIGNAL(timeout()),this,SLOT(checkStatus()));
     }

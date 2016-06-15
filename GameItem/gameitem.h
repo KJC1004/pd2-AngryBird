@@ -10,8 +10,6 @@
 #include <QtMath>
 #include "GameItem/gamelistener.h"
 
-#include <iostream>
-
 class GameItem : public QObject
 {
     Q_OBJECT

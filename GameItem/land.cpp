@@ -1,6 +1,6 @@
 #include "land.h"
 
-Land::Land(float size_ratio, b2Vec2 pos, QSizeF size, bool ground): GameItem(size_ratio)
+Land::Land(b2Vec2 pos, QSizeF size, bool ground): GameItem(0)
 {
     g_size = size;
     if(ground)

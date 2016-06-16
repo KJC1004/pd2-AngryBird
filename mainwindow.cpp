@@ -7,7 +7,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     qApp->installEventFilter(this);
-    qsrand(QTime::currentTime().second());
 }
 
 MainWindow::~MainWindow()
@@ -34,12 +33,13 @@ bool MainWindow::eventFilter(QObject *, QEvent *event)
         else if(dragBox.contains(mouseEvent->pos()) && nextRound<0)
         {
             drag = true;            
-            start = mouseEvent->pos();//QCursor::pos();
+            start = mouseEvent->pos();
             dx=0;//
             dy=0;
         }
+        return true;
     }
-    if(!drag || nextRound>=0) return false;
+    if(!drag || birdie->launched ||nextRound>=0) return false;
     if(event->type()==QEvent::MouseMove)
     {
         dx = mouseEvent->pos().x()-start.x();
@@ -49,6 +49,7 @@ bool MainWindow::eventFilter(QObject *, QEvent *event)
         dx = dx*(dl>V_MAX? V_MAX: dl)/dl;
         dy = dy*(dl>V_MAX? V_MAX: dl)/dl;
         birdie->setBirdPos(origin,dx,dy);
+        return true;
     }
     if(event->type()==QEvent::MouseButtonRelease)
     {
@@ -58,6 +59,7 @@ bool MainWindow::eventFilter(QObject *, QEvent *event)
         disconnect(timer_check,SIGNAL(timeout()),this,SLOT(checkStatus()));
         connect(timer_check,SIGNAL(timeout()),this,SLOT(checkStable()));
         ui->label_Remain->setText("x "+QString::number(--GameItem::birdCount));
+        return true;
     }
     return false;
 }
@@ -93,7 +95,7 @@ void MainWindow::initGame()
     catapult->setPos(origin.x()-catapult->pixmap().width()/2,origin.y()-25);
     scene->addItem(catapult);
 
-    itemList.push_back(new Land(0,b2Vec2(WORLD_W*0.5,0),QSizeF(WORLD_W,WORLD_H*0.2),true));
+    itemList.push_back(new Land(b2Vec2(WORLD_W*0.5,0),QSizeF(WORLD_W,WORLD_H*0.2),true));
 
     for(float i=0.5; i<=0.91; i+=0.1)
     {
@@ -158,7 +160,8 @@ void MainWindow::checkStable()
     b2Body *bodyList = world->GetBodyList();
     while(bodyList!=NULL)
     {
-        if(bodyList->GetLinearVelocity().Length()>1)        {
+        if(bodyList->GetLinearVelocity().Length()>1)
+        {
             nextRound=4;
             return;
         }
@@ -189,12 +192,7 @@ void MainWindow::checkStatus()
     }
 }
 
-void MainWindow::on_powerButton_clicked()
-{
-    close();
-}
-
-void MainWindow::on_playButton_clicked()
+void MainWindow::on_replayButton_clicked()
 {
     gameEnded=true;
     delete timer;
@@ -205,4 +203,9 @@ void MainWindow::on_playButton_clicked()
     delete world;
     delete scene;
     initGame();
+}
+
+void MainWindow::on_exitButtom_clicked()
+{
+    close();
 }

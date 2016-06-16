@@ -2,10 +2,11 @@
 
 Obstacle::Obstacle(b2Vec2 pos, QSizeF wh): GameItem(0.01)
 {
-    //stamina *= 0.3;
+    stamina *= wh.width()*wh.height()/25;
 
     g_size = QSizeF(g_worldsize.height()*ratio*wh.width(),g_worldsize.height()*ratio*wh.height());
-    g_pixmap.setPixmap(QPixmap(":/image/image/obstacle.png").scaled(g_scene->height()*ratio*wh.width(),g_scene->height()*ratio*wh.height()));
+    QPixmap temp = QPixmap(":/image/image/thinwood"+QString::number(wh.width()>wh.height()?0:1)+".png");
+    g_pixmap.setPixmap(temp.scaled(g_scene->height()*ratio*wh.width(),g_scene->height()*ratio*wh.height()));
     g_pixmap.setTransformOriginPoint(g_pixmap.boundingRect().width()/2,g_pixmap.boundingRect().height()/2);
 
     // Create Body

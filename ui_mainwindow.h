@@ -27,8 +27,8 @@ class Ui_MainWindow
 public:
     QWidget *centralWidget;
     QGraphicsView *graphicsView;
-    QPushButton *playButton;
-    QPushButton *powerButton;
+    QPushButton *replayButton;
+    QPushButton *exitButtom;
     QLabel *label_Sample;
     QLabel *label_Remain;
     QLabel *label_Result;
@@ -62,14 +62,14 @@ public:
         graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         graphicsView->setSizeAdjustPolicy(QAbstractScrollArea::AdjustIgnored);
-        playButton = new QPushButton(centralWidget);
-        playButton->setObjectName(QStringLiteral("playButton"));
-        playButton->setGeometry(QRect(0, 0, 150, 150));
-        playButton->setStyleSheet(QStringLiteral("border-image: url(:/image/image/playbutton.png);"));
-        powerButton = new QPushButton(centralWidget);
-        powerButton->setObjectName(QStringLiteral("powerButton"));
-        powerButton->setGeometry(QRect(0, 150, 150, 150));
-        powerButton->setStyleSheet(QStringLiteral("border-image: url(:/image/image/powerbutton.png);"));
+        replayButton = new QPushButton(centralWidget);
+        replayButton->setObjectName(QStringLiteral("replayButton"));
+        replayButton->setGeometry(QRect(0, 0, 150, 150));
+        replayButton->setStyleSheet(QStringLiteral("border-image: url(:/image/image/restart.png);"));
+        exitButtom = new QPushButton(centralWidget);
+        exitButtom->setObjectName(QStringLiteral("exitButtom"));
+        exitButtom->setGeometry(QRect(0, 150, 150, 150));
+        exitButtom->setStyleSheet(QStringLiteral("border-image: url(:/image/image/exit.png);"));
         label_Sample = new QLabel(centralWidget);
         label_Sample->setObjectName(QStringLiteral("label_Sample"));
         label_Sample->setGeometry(QRect(150, 150, 150, 150));
@@ -108,8 +108,8 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
-        playButton->setText(QString());
-        powerButton->setText(QString());
+        replayButton->setText(QString());
+        exitButtom->setText(QString());
         label_Sample->setText(QString());
         label_Remain->setText(QString());
         label_Result->setText(QString());

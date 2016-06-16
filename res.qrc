@@ -8,9 +8,12 @@
         <file>image/ground.png</file>
         <file>image/pig.png</file>
         <file>image/big.png</file>
-        <file>image/playbutton.png</file>
-        <file>image/powerbutton.png</file>
         <file>image/obstacle.png</file>
         <file>image/background.jpg</file>
+        <file>image/exit.png</file>
+        <file>image/restart.png</file>
+        <file>image/thinwood1.png</file>
+        <file>image/wood.png</file>
+        <file>image/thinwood0.png</file>
     </qresource>
 </RCC>

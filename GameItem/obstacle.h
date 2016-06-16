@@ -3,8 +3,8 @@
 
 #include "GameItem/gameitem.h"
 #define OBSTACLE_DENSITY 10.0f
-#define OBSTACLE_FRICTION 0.2f
-#define OBSTACLE_RESTITUTION 0.0f
+#define OBSTACLE_FRICTION 0.1f
+#define OBSTACLE_RESTITUTION 0.1f
 class Obstacle: public GameItem
 {
 public:

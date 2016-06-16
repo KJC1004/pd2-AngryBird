@@ -11,6 +11,8 @@
 #include <Box2D/Box2D.h>
 #include "GameItem/Angry.h"
 
+#include <iostream>
+
 #define WORLD_W 64
 #define WORLD_H 36
 #define FPS 60.0f
@@ -42,8 +44,8 @@ private slots:
     void clearWasted();
     void checkStable();
     void checkStatus();
-    void on_powerButton_clicked();
-    void on_playButton_clicked();
+    void on_replayButton_clicked();
+    void on_exitButtom_clicked();
 
 private:
     Ui::MainWindow *ui;

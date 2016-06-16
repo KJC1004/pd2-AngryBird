@@ -6,7 +6,7 @@
 class Land : public GameItem
 {
 public:
-    Land(float,b2Vec2,QSizeF,bool);
+    Land(b2Vec2,QSizeF,bool);
     virtual ~Land();
 };
 

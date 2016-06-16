@@ -69,7 +69,7 @@
      <enum>QAbstractScrollArea::AdjustIgnored</enum>
     </property>
    </widget>
-   <widget class="QPushButton" name="playButton">
+   <widget class="QPushButton" name="replayButton">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -79,13 +79,13 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-image: url(:/image/image/playbutton.png);</string>
+     <string notr="true">border-image: url(:/image/image/restart.png);</string>
     </property>
     <property name="text">
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="powerButton">
+   <widget class="QPushButton" name="exitButtom">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -95,7 +95,7 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">border-image: url(:/image/image/powerbutton.png);</string>
+     <string notr="true">border-image: url(:/image/image/exit.png);</string>
     </property>
     <property name="text">
      <string/>

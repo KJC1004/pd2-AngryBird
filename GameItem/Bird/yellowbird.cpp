@@ -13,6 +13,6 @@ YellowBird::~YellowBird()
 void YellowBird::special()
 {
     b2Vec2 v = g_body->GetLinearVelocity();
-    v *= 100/pow(pow(v.x,2)+pow(v.y,2),0.5);
+    v *= 500/pow(pow(v.x,2)+pow(v.y,2),0.5);
     g_body->SetLinearVelocity(v);
 }

@@ -28,13 +28,12 @@ Pig::Pig(float size_ratio, b2Vec2 pos): GameItem(size_ratio)
     fixturedef.restitution = PIG_RESTITUTION;
     g_body->CreateFixture(&fixturedef);
     g_body->SetAngularDamping(1);
-    g_body->SetLinearDamping(1);
 
     paint();
     g_scene->addItem(&g_pixmap);
 
     connect(g_timer, SIGNAL(timeout()), this, SLOT(paint()));
-    connect(g_timer_check, SIGNAL(timeout()), this, SLOT(checkPos()));
+    connect(g_timer_check,SIGNAL(timeout()),this,SLOT(checkPos()));
 }
 
 Pig::~Pig()

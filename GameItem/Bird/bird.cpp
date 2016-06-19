@@ -30,6 +30,7 @@ void Bird::launch(b2Vec2 velocity)
     // Create Body
     b2BodyDef bodydef;
     bodydef.type = b2_dynamicBody;
+    bodydef.bullet = true;
     bodydef.position.Set(mapped.x(),mapped.y());
 
     bodydef.userData = this;

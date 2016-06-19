@@ -2,7 +2,7 @@
 #define BLUEBIRD_H
 
 #include "GameItem/Bird/bird.h"
-
+#define PI 3.14159f
 class BlueBird: public Bird
 {
 public:

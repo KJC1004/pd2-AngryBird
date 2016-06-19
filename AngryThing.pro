@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     GameItem/obstacle.cpp \
     GameItem/pig.cpp \
     GameItem/Bird/bigbird.cpp \
-    GameItem/gamelistener.cpp
+    GameItem/gamelistener.cpp \
+    GameItem/Bird/blackbird.cpp
 
 HEADERS  += mainwindow.h \
     Box2D/Collision/Shapes/b2ChainShape.h \
@@ -83,7 +84,8 @@ HEADERS  += mainwindow.h \
     GameItem/obstacle.h \
     GameItem/pig.h \
     GameItem/Bird/bigbird.h \
-    GameItem/gamelistener.h
+    GameItem/gamelistener.h \
+    GameItem/Bird/blackbird.h
 
 FORMS    += mainwindow.ui
 

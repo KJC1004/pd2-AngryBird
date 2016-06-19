@@ -2,7 +2,7 @@
 
 Obstacle::Obstacle(b2Vec2 pos, QSizeF wh): GameItem(0.01)
 {
-    stamina *= wh.width()*wh.height()/25;
+    stamina *= wh.width()*wh.height()/10;
 
     g_size = QSizeF(g_worldsize.height()*ratio*wh.width(),g_worldsize.height()*ratio*wh.height());
     QPixmap temp = QPixmap(":/image/image/thinwood"+QString::number(wh.width()>wh.height()?0:1)+".png");
@@ -26,7 +26,6 @@ Obstacle::Obstacle(b2Vec2 pos, QSizeF wh): GameItem(0.01)
     fixturedef.restitution = OBSTACLE_RESTITUTION;
     g_body->CreateFixture(&fixturedef);
     g_body->SetAngularDamping(1);
-    g_body->SetLinearDamping(1);
 
     paint();
     g_scene->addItem(&g_pixmap);

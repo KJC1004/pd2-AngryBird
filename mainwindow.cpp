@@ -60,9 +60,11 @@ bool MainWindow::eventFilter(QObject *, QEvent *event)
         connect(timer_check,SIGNAL(timeout()),this,SLOT(checkStable()));
         ui->label_Remain->setText("x "+QString::number(--GameItem::birdCount));
         return true;
-    }
+    }    
     return false;
 }
+
+
 
 void MainWindow::closeEvent(QCloseEvent *)
 {
@@ -80,13 +82,13 @@ void MainWindow::initGame()
     gameEnded = false;
     nextRound = 1;
 
-    world = new b2World(b2Vec2(0.0f, -20.0f));
+    world = new b2World(b2Vec2(0.0f, -WORLD_H/2));
     world->SetContactListener(new GameListener());
     scene = new QGraphicsScene(0,0,width(),height());
     scene->setBackgroundBrush(QImage(":/image/image/background.jpg").scaled(width(),height()));
     ui->graphicsView->setScene(scene);
 
-    birds = {1,2,3,4};
+    birds={0,1,2,3,4};
     GameItem::initGameItem(QSizeF(WORLD_W,WORLD_H),size(),world,scene,timer,timer_check,&itemList,birds.size());
     origin = QPointF(width()*0.1, height()*0.75);
 
@@ -95,7 +97,8 @@ void MainWindow::initGame()
     catapult->setPos(origin.x()-catapult->pixmap().width()/2,origin.y()-25);
     scene->addItem(catapult);
 
-    itemList.push_back(new Land(b2Vec2(WORLD_W*0.5,0),QSizeF(WORLD_W,WORLD_H*0.2),true));
+    itemList.push_back(new Land(b2Vec2(WORLD_W*0.5,WORLD_H*0.05),QSizeF(WORLD_W,WORLD_H*0.1),true));
+    itemList.push_back(new Land(b2Vec2(WORLD_W*1.05,WORLD_H*0.5),QSizeF(WORLD_W*0.1,WORLD_H),false));
 
     for(float i=0.5; i<=0.91; i+=0.1)
     {
@@ -116,6 +119,19 @@ void MainWindow::initGame()
     ui->label_Result->clear();
 }
 
+void MainWindow::endGame()
+{
+    gameEnded=true;
+    delete timer;
+    delete timer_check;
+    for(int i=0; i<itemList.size(); ++i)
+        delete itemList[i];
+    itemList.clear();
+    birds.clear();
+    delete world;
+    delete scene;
+}
+
 void MainWindow::order()
 {
     drag=false;
@@ -123,10 +139,11 @@ void MainWindow::order()
     if(gameEnded || nextRound>0 || birds.size()==0) return;
     switch(birds[0])
     {
-        case 1: birdie = new RedBird(0.07,origin,QPixmap(":/image/image/red.png"));      break;
-        case 2: birdie = new YellowBird(0.07,origin,QPixmap(":/image/image/yellow.png"));break;
-        case 3: birdie = new BlueBird(0.05,origin,QPixmap(":/image/image/blue.png"));   break;
-        case 4: birdie = new BigBird(0.1,origin,QPixmap(":/image/image/big.png"));     break;
+        case 0: birdie = new RedBird(0.07,origin,QPixmap(":/image/image/red.png"));      break;
+        case 1: birdie = new YellowBird(0.07,origin,QPixmap(":/image/image/yellow.png"));break;
+        case 2: birdie = new BlueBird(0.05,origin,QPixmap(":/image/image/blue.png"));   break;
+        case 3: birdie = new BigBird(0.1,origin,QPixmap(":/image/image/big.png"));     break;
+        case 4: birdie = new BlackBird(0.07,origin,QPixmap(":image/image/black.png")); break;
         default: birdie = NULL; break;
     }
     birds.removeFirst();
@@ -137,7 +154,7 @@ void MainWindow::order()
 
 void MainWindow::nextFrame()
 {
-    world->Step(1.0/FPS,10,2);
+    world->Step(1.0/FPS,6,2);
     scene->update();
     ui->label_Score->setText("SCORE  :  "+QString::number((int)GameItem::score));
 }
@@ -194,18 +211,12 @@ void MainWindow::checkStatus()
 
 void MainWindow::on_replayButton_clicked()
 {
-    gameEnded=true;
-    delete timer;
-    delete timer_check;
-    for(int i=0; i<itemList.size(); ++i)
-        delete itemList[i];
-    itemList.clear();
-    delete world;
-    delete scene;
+    endGame();
     initGame();
 }
 
 void MainWindow::on_exitButtom_clicked()
 {
+    endGame();
     close();
 }

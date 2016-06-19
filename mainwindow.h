@@ -6,7 +6,6 @@
 #include <QGraphicsPixmapItem>
 #include <QList>
 #include <QTimer>
-#include <QTime>
 #include <QMouseEvent>
 #include <Box2D/Box2D.h>
 #include "GameItem/Angry.h"
@@ -34,6 +33,7 @@ public:
     bool eventFilter(QObject *,QEvent *event);
     void closeEvent(QCloseEvent *);
     void initGame();
+    void endGame();
     void order();
 
 signals:

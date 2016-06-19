@@ -12,5 +12,6 @@
 #include "GameItem/Bird/bluebird.h"
 #include "GameItem/Bird/redbird.h"
 #include "GameItem/Bird/yellowbird.h"
+#include "GameItem/Bird/blackbird.h"
 
 #endif // ALL_H

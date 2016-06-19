@@ -14,10 +14,14 @@ void BlueBird::special()
 {
     Bird *duplicate;
     b2Vec2 v = g_body->GetLinearVelocity();
-    duplicate = new BlueBird(ratio,g_pixmap.pos()+QPointF(0,g_pixmap.pixmap().height()),g_pixmap.pixmap());
-    duplicate->launch(b2Vec2(v.x,v.y-5));
+    float angle=atan2f(v.y,v.x), spin=PI/18, dist=g_pixmap.pixmap().height();
+    duplicate = new BlueBird(ratio,g_pixmap.pos()+QPointF(dist*cosf(angle+PI/2),dist*-sinf(angle+PI/2)),g_pixmap.pixmap());
+    duplicate->launch(b2Vec2(v.x*cosf(spin)+v.y*-sinf(spin),v.x*+sinf(spin)+v.y*cosf(spin)));
     list->push_back(duplicate);
-    duplicate = new BlueBird(ratio,g_pixmap.pos()-QPointF(0,g_pixmap.pixmap().height()),g_pixmap.pixmap());
-    duplicate->launch(b2Vec2(v.x,v.y+5));
+
+    duplicate = new BlueBird(ratio,g_pixmap.pos()+QPointF(dist*cosf(angle-PI/2),dist*-sinf(angle-PI/2)),g_pixmap.pixmap());
+    duplicate->launch(b2Vec2(v.x*cosf(-spin)+v.y*-sinf(-spin),v.x*sinf(-spin)+v.y*cosf(-spin)));
     list->push_back(duplicate);
+
+
 }
